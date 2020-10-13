@@ -37,7 +37,24 @@ Opt("GUIOnEventMode",1)
 Local $hMainGUI = GUICreate("Start work", 600,400)
 GUISetOnEvent($GUI_EVENT_CLOSE,"CLOSEButton")
 GUICtrlCreateLabel("Start the env", 30,10)
-Local $iStartWorkButton = GUICtrlCreateButton("GO", 100,10,60)
+Local $iStartWorkButton = GUICtrlCreateButton("Start ENV", 30,40,60)
+Local $iStartFirefoxDefultButton = GUICtrlCreateButton("Firefox default", 30, 80, 60)
+
+
+GUICtrlCreateLabel("POMP", 300,10)
+Local $iPOMP208Button = GUICtrlCreateButton("POMP208", 300, 40, 60)
+Local $iPOMP204Button = GUICtrlCreateButton("POMP204", 300, 80, 60)
+Local $iPOMPLABSButton = GUICtrlCreateButton("POMPLABS", 300, 120, 60)
+Local $iPOMPRESButton = GUICtrlCreateButton("POMPRES", 300, 160, 60)
+
+
+GUICtrlCreateLabel("EUOP", 400,10)
+Local $iEUOP181Button = GUICtrlCreateButton("EUOP181",400, 40, 60)
+Local $iEUOP175Button = GUICtrlCreateButton("EUOP175",400, 80, 60)
+Local $iEUOPLABSButton = GUICtrlCreateButton("EUOPLABS", 400, 120, 60)
+Local $iEUOPRESButton = GUICtrlCreateButton("EUOPRES", 400, 160, 60)
+
+
 GUICtrlSetOnEvent($iStartWorkButton,"Start_work")
 GUISetState(@SW_SHOW,$hMainGUI)
 
@@ -46,50 +63,50 @@ While 1
 WEnd
 
 Func CLOSEButton()
-    MsgBox($MB_OK, "GUI Event", "Closing")
+    ;MsgBox($MB_OK, "GUI Event", "Closing")
     Exit
 EndFunc ;==>CLOSEButton
 
 
 Func Start_work()
-;上班后启动工作环境
-;登录联网许可，打开chrome，点击确定
-run($sChrome  & " " &    $sUrlGerit  & " " & $sUrlJenkins  & " " & $sUrlRdms  & " " & $sUrlTestlink  & " " & $sUrlMantis)
-Local $hWinChrome = WinWaitActive("[TITLE:Gerrit Code Review - Sign In - Google Chrome;INSTANCE:1]","");
+    ;上班后启动工作环境
+    ;登录联网许可，打开chrome，点击确定
+    run($sChrome  & " " &    $sUrlGerit  & " " & $sUrlJenkins  & " " & $sUrlRdms  & " " & $sUrlTestlink  & " " & $sUrlMantis)
+    Local $hWinChrome = WinWaitActive("[TITLE:Gerrit Code Review - Sign In - Google Chrome;INSTANCE:1]","");
 
 
 
 
-sleep(4*1000)
-send("{ENTER}")
-send("{ENTER}}")
+    sleep(4*1000)
+    send("{ENTER}")
+    send("{ENTER}}")
 
-send("^2") ;jenkins
-sleep(4*1000)
-send("{ENTER}")
+    send("^2") ;jenkins
+    sleep(4*1000)
+    send("{ENTER}")
 
-send("^3") ;rdms
-sleep(4*1000)
-send("{ENTER}")
-mouseclick("left",1010,642,1); 确认登录 RDMS
+    send("^3") ;rdms
+    sleep(4*1000)
+    send("{ENTER}")
+    mouseclick("left",1010,642,1); 确认登录 RDMS
 
-send("^4") ; Testlink
-sleep(4*1000)
-send("{ENTER}")
+    send("^4") ; Testlink
+    sleep(4*1000)
+    send("{ENTER}")
 
-send("^5") ; mantis
-sleep(4*1000)
-send("{ENTER}")
+    send("^5") ; mantis
+    sleep(4*1000)
+    send("{ENTER}")
 
 EndFunc ;==>Start_work
 
 Func POMP_208()
 
    ;打开POMP-1310网站
-;send("{ENTER}")
-run($sFirefox & " " & $sUrlPomp208User)
+   ;send("{ENTER}")
+   run($sFirefox & " " & $sUrlPomp208User)
 
-Local $hWinFirefox = WinWaitActive("[TITLE:管理员登录 - Mozilla Firefox;CLASS:MozillaWindowClass]","")
+   Local $hWinFirefox = WinWaitActive("[TITLE:管理员登录 - Mozilla Firefox;CLASS:MozillaWindowClass]","")
 
 EndFunc ;POMP_208
 
