@@ -14,7 +14,17 @@ https://github.com/norstc/startwork.git
 
 ## git操作
 
-修改后先commit
+修改后先add
+
+
+
+```shell
+git add README.md
+```
+
+
+
+然后commit
 
 ```shell
 git commit -m "github repo intro"
