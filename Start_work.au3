@@ -11,6 +11,7 @@
 ; Script Start - Add your code below here
 
 #include <MsgBoxConstants.au3>
+#include <GUIConstantsEx.au3>
 ;browser
 Local $sChrome="C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
 Local $sFirefox="C:\Program Files (x86)\Mozilla Firefox\firefox.exe"
@@ -31,45 +32,66 @@ Local $sUrlPomp204="http://192.168.1.204/pomp/login.do"
 Local $sUrlMCMS200="https://192.168.1.200/mcms/user/login.do"
 Local $sUrlMcms216="http://192.168.0.216:8080/user/login.do"
 
+Opt("GUIOnEventMode",1)
 
+Local $hMainGUI = GUICreate("Start work", 600,400)
+GUISetOnEvent($GUI_EVENT_CLOSE,"CLOSEButton")
+GUICtrlCreateLabel("Start the env", 30,10)
+Local $iStartWorkButton = GUICtrlCreateButton("GO", 100,10,60)
+GUICtrlSetOnEvent($iStartWorkButton,"Start_work")
+GUISetState(@SW_SHOW,$hMainGUI)
+
+While 1
+    Sleep(100)
+WEnd
+
+Func CLOSEButton()
+    MsgBox($MB_OK, "GUI Event", "Closing")
+    Exit
+EndFunc ;==>CLOSEButton
+
+
+Func Start_work()
 ;上班后启动工作环境
 ;登录联网许可，打开chrome，点击确定
-run($sChrome  & " " &  $sUrlInternetLogin  & " " &  $sUrlGerit  & " " & $sUrlJenkins  & " " & $sUrlRdms  & " " & $sUrlTestlink  & " " & $sUrlMantis)
-Local $hWinChrome = WinWaitActive("[TITLE:用户认证系统 - Google Chrome;CLASS:Chrome_WidgetWin_1;INSTANCE:1]","");
+run($sChrome  & " " &    $sUrlGerit  & " " & $sUrlJenkins  & " " & $sUrlRdms  & " " & $sUrlTestlink  & " " & $sUrlMantis)
+Local $hWinChrome = WinWaitActive("[TITLE:Gerrit Code Review - Sign In - Google Chrome;INSTANCE:1]","");
 
-sleep(5*1000)
-MouseClick("left",1009,423,1) ;确认登录安全上网按钮
 
-send("^2") ;gerrit
+
+
 sleep(4*1000)
 send("{ENTER}")
 send("{ENTER}}")
 
-send("^3") ;jenkins
+send("^2") ;jenkins
 sleep(4*1000)
 send("{ENTER}")
 
-send("^4") ;rdms
+send("^3") ;rdms
 sleep(4*1000)
 send("{ENTER}")
 mouseclick("left",1010,642,1); 确认登录 RDMS
 
-send("^5") ; Testlink
+send("^4") ; Testlink
 sleep(4*1000)
 send("{ENTER}")
 
-send("^6") ; mantis
+send("^5") ; mantis
 sleep(4*1000)
 send("{ENTER}")
 
-;打开POMP-1310网站
+EndFunc ;==>Start_work
+
+Func POMP_208()
+
+   ;打开POMP-1310网站
 ;send("{ENTER}")
 run($sFirefox & " " & $sUrlPomp208User)
 
 Local $hWinFirefox = WinWaitActive("[TITLE:管理员登录 - Mozilla Firefox;CLASS:MozillaWindowClass]","")
-MsgBox($MB_SYSTEMMODAL, "LET'S START WORK", "CHECK THE UUT")
 
-
+EndFunc ;POMP_208
 
 
 ;
