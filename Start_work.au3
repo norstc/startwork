@@ -15,6 +15,8 @@
 ;browser
 Local $sChrome="C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
 Local $sFirefox="C:\Program Files (x86)\Mozilla Firefox\firefox.exe"
+Local $sOpera="C:\Users\Administrator\AppData\Local\Programs\Opera\launcher.exe"
+Local $sEdge_Shortcut=""
 
 ;work around
 Local $sUrlInternetLogin="http://10.10.10.18:90/p/cdbdd4a09a64909694281aec503746fd/index.html?aGFvLjE2OXguY24v"
@@ -55,6 +57,8 @@ Local $iStartWorkButton = GUICtrlCreateButton("Start ENV", 30,40,100)
 Local $iStartFirefoxDefaultButton = GUICtrlCreateButton("Firefox default", 30, 80, 100)
 Local $iStartChromeDefaultButton = GUICtrlCreateButton("Chrome default", 30, 120, 100)
 Local $iStartEdgeDefaultButton = GUICtrlCreateButton("Edge default", 30, 160, 100)
+Local $iStartOperaDefaultButton = GUICtrlCreateButton("Opera default", 30,200, 100)
+Local $iStartIeDefaultButton = GUICtrlCreateButton("Ie default", 30, 240, 100)
 
 
 
@@ -71,7 +75,7 @@ Local $iEuop175Button = GUICtrlCreateButton("Euop175",300, 80, 60)
 Local $iEuopLabsButton = GUICtrlCreateButton("EuopLabs", 300, 120, 60)
 Local $iEuopResButton = GUICtrlCreateButton("EuopRes", 300, 160, 60)
 
-
+;buttons with functions
 GUICtrlSetOnEvent($iStartWorkButton,"Start_work")
 GUICtrlSetOnEvent($iEuopResButton, "Euop_Res")
 GUICtrlSetOnEvent($iEuopLabsButton,"Euop_Labs")
@@ -85,7 +89,8 @@ GUICtrlSetOnEvent($iPomp204Button,"Pomp_204")
 
 GUICtrlSetOnEvent($iStartFirefoxDefaultButton, "Firefox_Default")
 GUICtrlSetOnEvent($iStartChromeDefaultButton, "Chrome_Default")
-
+GUICtrlSetOnEvent($iStartOperaDefaultButton,"Opera_Default");
+GUICtrlSetOnEvent($iStartEdgeDefaultButton, "Edge_Default")
 GUISetState(@SW_SHOW,$hMainGUI)
 
 While 1
@@ -106,27 +111,26 @@ Func Start_work()
 
 
 
+   send("^1");gerit
+    sleep(1*1000)
 
-    sleep(4*1000)
-    send("{ENTER}")
-    send("{ENTER}}")
 
     send("^2") ;jenkins
-    sleep(4*1000)
-    send("{ENTER}")
+    sleep(1*1000)
+
 
     send("^3") ;rdms
-    sleep(4*1000)
-    send("{ENTER}")
-    mouseclick("left",1010,642,1); 确认登录 RDMS
+    sleep(1*1000)
+
+    ;mouseclick("left",1010,642,1); 确认登录 RDMS
 
     send("^4") ; Testlink
-    sleep(4*1000)
-    send("{ENTER}")
+    sleep(1*1000)
+
 
     send("^5") ; mantis
-    sleep(4*1000)
-    send("{ENTER}")
+    sleep(1*1000)
+
 
 EndFunc ;==>Start_work
 
@@ -178,6 +182,17 @@ EndFunc ;Euop_Labs
 
 Func Euop_181()
    Run($sFirefox & " -no-remote -profile firefox_profiles/Euop_181 " & $sUrlEuop181User)
+   Local $hWin = WinWaitActive("[TITLE:管理员登录 - Mozilla Firefox]","")
+   Sleep(1000)
+   Send("{TAB}")
+   Send($sUserName)
+   Send("{TAB}")
+   Send($sPhone)
+   Send("{TAB}")
+   Send("1")
+
+
+
 
 EndFunc ;Euop_Labs
 
@@ -193,6 +208,22 @@ EndFunc;
 
 Func Chrome_Default()
    Run($sChrome & " " & $sUrlBing)
+EndFunc;
+
+Func Opera_Default()
+   Run($sOpera & " " & $sUrlBing)
+EndFunc;
+
+
+Func Edge_Default()
+   Local $edge_test = FileExists(@WindowsDir & '\SystemApps\Microsoft.MicrosoftEdge_8wekyb3d8bbwe\MicrosoftEdge.exe')
+   If $edge_test = 1 Then
+	  Local $edge = RunWait('explorer.exe shell:AppsFolder\Microsoft.MicrosoftEdge_8wekyb3d8bbwe!MicrosoftEdge')
+   EndIf
+EndFunc;
+
+Func Ie_Default()
+   Run($sIe & " " & $sUrlBing)
 EndFunc;
 
 ;
