@@ -139,43 +139,97 @@ Func Pomp_208()
    run($sFirefox & " -no-remote -profile firefox_profiles/Pomp_208 " & $sUrlPomp208User)
 
    Local $hWinFirefox = WinWaitActive("[TITLE:管理员登录 - Mozilla Firefox;CLASS:MozillaWindowClass]","")
+   Local $hWin = WinWaitActive("[TITLE:管理员登录 - Mozilla Firefox]","")
+   Sleep(1000)
+   Send("{TAB}")
+   Send($sUserName)
+   Send("{TAB}")
+   Send($sPhone)
+   Send("{TAB}")
+   Send("1")
+
 
 EndFunc ;Pomp_208
 
 Func Pomp_204()
+   Local $sUserNamePomp204 = 'test_jt_2@sh.com';
+   Local $sPhonePomp204="13312345678"
 
    run($sFirefox & " -no-remote -profile firefox_profiles/Pomp_204 " & $sUrlPomp204User)
 
    Local $hWinFirefox = WinWaitActive("[TITLE:管理员登录 - Mozilla Firefox;CLASS:MozillaWindowClass]","")
+   Local $hWin = WinWaitActive("[TITLE:管理员登录 - Mozilla Firefox]","")
+   Sleep(1000)
+   Send("{TAB}")
+   Send($sUserNamePomp204)
+   Send("{TAB}")
+   Send($sPhonePomp204)
+   Send("{TAB}")
+   Send("1")
+
 
 EndFunc ;Pomp_204
 
 
 Func Pomp_Labs()
-
+   Local $sUserNamePompLabs = "zhangjunhua@sh";
+   Local $sPhonePompLabs = "15800407048";
    run($sFirefox & " -no-remote -profile firefox_profiles/Pomp_Labs " & $sUrlPompLabsUser)
 
    Local $hWinFirefox = WinWaitActive("[TITLE:管理员登录 - Mozilla Firefox;CLASS:MozillaWindowClass]","")
+   Sleep(1000)
+   Send("{TAB}")
+   Send($sUserNamePompLabs)
+   Send("{TAB}")
+   Send($sPhonePompLabs)
+   Send("{TAB}")
+   Send("1")
 
 EndFunc ;Pomp_Labs
 
 Func Pomp_Res()
-
+   Local $sUserNamePompRes="15261061786"
+   Local $sPhonePompRes="15800407048"
    run($sFirefox & " -no-remote -profile firefox_profiles/Pomp_Res " & $sUrlPompResUser)
 
    Local $hWinFirefox = WinWaitActive("[TITLE:管理员登录 - Mozilla Firefox;CLASS:MozillaWindowClass]","")
+   Sleep(1000)
+   Send("{TAB}")
+   Send($sUserNamePompRes)
+   Send("{TAB}")
+   Send($sPhonePompRes)
+   Send("{TAB}")
+   Send("1")
 
 EndFunc ;Pomp_Res
 
 
 Func Euop_Res()
    Run($sFirefox & " -no-remote -profile firefox_profiles/Euop_Res " & $sUrlEuopResUser)
+   Local $hWin = WinWaitActive("[TITLE:管理员登录 - Mozilla Firefox]","")
+   Sleep(1000)
+   Send("{TAB}")
+   Send($sUserName)
+   Send("{TAB}")
+   Send($sPhone)
+   Send("{TAB}")
+   Send("1")
+
 
 EndFunc ;Euop_Res
 
 
 Func Euop_Labs()
+   Local $sUserNameEuopLabs='zhangjunhua@sh.com'
    Run($sFirefox & " -no-remote -profile firefox_profiles/Euop_Labs " & $sUrlEuopLabsUser)
+   Local $hWin = WinWaitActive("[TITLE:管理员登录 - Mozilla Firefox]","")
+   Sleep(1000)
+   Send("{TAB}")
+   Send($sUserNameEuopLabs)
+   Send("{TAB}")
+   Send($sPhone)
+   Send("{TAB}")
+   Send("1")
 
 EndFunc ;Euop_Labs
 
@@ -198,6 +252,15 @@ EndFunc ;Euop_Labs
 
 Func Euop_175()
    Run($sFirefox & " -no-remote -profile firefox_profiles/Euop_175 " & $sUrlEuop175User)
+   Local $hWin = WinWaitActive("[TITLE:管理员登录 - Mozilla Firefox]","")
+   Sleep(1000)
+   Send("{TAB}")
+   Send($sUserName)
+   Send("{TAB}")
+   Send($sPhone)
+   Send("{TAB}")
+   Send("1")
+
 
 EndFunc ;Euop_Labs
 
