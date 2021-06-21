@@ -12,6 +12,10 @@
 
 #include <MsgBoxConstants.au3>
 #include <GUIConstantsEx.au3>
+#include <Word.au3>
+#include <Date.au3>
+#include <Excel.au3>
+
 ;browser
 Local $sChrome="C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
 Local $sFirefox="C:\Program Files (x86)\Mozilla Firefox\firefox.exe"
@@ -76,6 +80,10 @@ Local $iEuop175Button = GUICtrlCreateButton("Euop175",300, 80, 60)
 Local $iEuopLabsButton = GUICtrlCreateButton("EuopLabs", 300, 120, 60)
 Local $iEuopResButton = GUICtrlCreateButton("EuopRes", 300, 160, 60)
 
+GUICtrlCreateLabel("Auto word", 400,10)
+Local $iWordAutoButton = GUICtrlCreateButton("普通账号申请", 400, 40, 180)
+Local $iOvernightAutoButton = GUICtrlCreateButton("非工作时间普通账号申请", 400, 80, 180)
+
 ;buttons with functions
 GUICtrlSetOnEvent($iStartWorkButton,"Start_work")
 GUICtrlSetOnEvent($iEuopResButton, "Euop_Res")
@@ -93,6 +101,10 @@ GUICtrlSetOnEvent($iStartFirefoxDefaultButton, "Firefox_Default")
 GUICtrlSetOnEvent($iStartChromeDefaultButton, "Chrome_Default")
 GUICtrlSetOnEvent($iStartOperaDefaultButton,"Opera_Default");
 GUICtrlSetOnEvent($iStartEdgeDefaultButton, "Edge_Default")
+
+GUICtrlSetOnEvent($iWordAutoButton, "Word_Auto_Dev")
+GUICtrlSetOnEvent($iOvernightAutoButton, "Overnight_Auto_Dev")
+
 GUISetState(@SW_SHOW,$hMainGUI)
 
 While 1
@@ -298,10 +310,124 @@ Func Ie_Default()
    Run($sIe & " " & $sUrlBing)
 EndFunc;
 
+;普通账号申请
+;自动创建一个word文档
+Func Word_Auto_Dev()
+    ;create the document for dev account
+    Local $oWord = _Word_Create()
+    If @error Then Exit MsgBox($MB_SYSTEMMODAL, "Word UDF: _Word_DocOpen", _
+        "Error creating a new Word application object." & @CRLF & "@error = " & @error & ", @extended = " & @extended)
+    
+    ;open the template
+    Local $sDocument = @ScriptDir & "\template\dev.doc"
+    Local $oDoc = _Word_DocOpen($oWord, $sDocument, Default, Default, False)
+    If @error Then Exit MsgBox($MB_SYSTEMMODAL, "Word UDF", "Error opening '.\template\dev.doc'." & _
+        @CRLF & "@error = " & @error & ", @extended = " & @extended)
+    
+    ;change the [[date]] to current date , such as 2021.6.7
+    _Word_DocFindReplace($oDoc, "[[date]]", @YEAR & "." & @MON & "." & @MDAY)
+    If @error Then Exit MsgBox($MB_SYSTEMMODAL, "Word UDF: _Word_DocFindReplace", _
+        "Error replacing text in the document." & @CRLF & "@error = " & @error & ", extended = " & @extended)
+    
+    ;ask for a reason
+    ;如果输入为空则使用默认理由，如果有输入则使用输入理由
+    Local $sDefaultReason = "由于EUOP&POMP现网维护，需要dev账号权限查看应用和接口机日志"
+    Local $sRequestReason = InputBox("申请理由", "申请普通用户理由",$sDefaultReason,"", 300, -1, 0,0)
+    ; change the [[reason]]
+    _Word_DocFindReplace($oDoc, "[[reason]]", $sRequestReason)
+    If @error Then Exit MsgBox($MB_SYSTEMMODAL, "Word UDF: _Word_DocFindReplace", _
+        "Error replacing [[reason]] in the document.", & @CRLF & "@error = " & @error & ", extended = " & @extended)
+    
+    ;save the document
+    Local $sNewDocumentName = "普通用户权限申请表-" & @YEAR & @MON & @MDAY & " 0900-1800-张俊华.doc"
+    _Word_DocSaveAs($oDoc, "E:\zjh\work\stt-it\普通账号申请记录" & "\" & $sNewDocumentName)
+    If @error Then Exit MsgBox($MB_SYSTEMMODAL, "Word UDF: _Word_DocSaveAs", _
+        "Error saving the word document." & @CRLF & "@error = " & @error & ", @extended = " & @extended)
+EndFunc ;Word_Auto_Dev
 ;
+
+
+;非工作时间申请普通账号
+;自动创建一个excel和一个word文档
+Func Overnight_Auto_Dev()
+    ;word文档
+    ;create the document for dev account
+    Local $oWord = _Word_Create()
+    If @error Then Exit MsgBox($MB_SYSTEMMODAL, "Word UDF: _Word_DocOpen", _
+        "Error creating a new Word application object." & @CRLF & "@error = " & @error & ", @extended = " & @extended)
+    
+    ;open the template
+    Local $sDocument = @ScriptDir & "\template\dev_overnight.doc"
+    Local $oDoc = _Word_DocOpen($oWord, $sDocument, Default, Default, False)
+    If @error Then Exit MsgBox($MB_SYSTEMMODAL, "Word UDF", "Error opening '.\template\dev.doc'." & _
+        @CRLF & "@error = " & @error & ", @extended = " & @extended)
+    
+    ;change the [[startDate]] to current day , such as 2021.06.07
+    _Word_DocFindReplace($oDoc, "[[startDate]]", @YEAR & "." & @MON & "." & @MDAY)
+    If @error Then Exit MsgBox($MB_SYSTEMMODAL, "Word UDF: _Word_DocFindReplace", _
+        "Error replacing startDate in the document." & @CRLF & "@error = " & @error & ", extended = " & @extended)
+    
+    ;change the [[endDate]] to next day
+    Local $sNewDate = _DateAdd('d', 1, _NowCalcDate())
+    Local $aNewDate, $aNewTime
+    _DateTimeSplit($sNewDate, $aNewDate, $aNewTime)
+    Local $sNextYear = $aNewDate[1]
+    Local $sNextMonth = get_leading_zero($aNewDate[2])
+    Local $sNextDay = get_leading_zero($aNewDate[3])
+    
+    _Word_DocFindReplace($oDoc, "[[endDate]]", $sNextYear & "." & $sNextMonth & "." & $sNextDay)
+    If @error Then Exit MsgBox($MB_SYSTEMMODAL, "Word UDF: _Word_DocFindReplace", _
+        "Error replacing endDate in the document." & @CRLF & "@error = " & @error & ", extended = " & @extended)
+    
+    ;ask for a reason
+    ;如果输入为空则使用默认理由，如果有输入则使用输入理由
+    Local $sDefaultReason = "由于EUOP&POMP现网维护，需要dev账号权限查看应用和接口机日志"
+    Local $sRequestReason = InputBox("申请理由", "申请普通用户理由",$sDefaultReason,"", 300, -1, 0,0)
+    ; change the [[reason]]
+    _Word_DocFindReplace($oDoc, "[[reason]]", $sRequestReason)
+    If @error Then Exit MsgBox($MB_SYSTEMMODAL, "Word UDF: _Word_DocFindReplace", _
+        "Error replacing [[reason]] in the document.", & @CRLF & "@error = " & @error & ", extended = " & @extended)
+    
+    ;save the document
+    Local $sNewDocumentName = "普通用户权限申请表-" & @YEAR & @MON & @MDAY & " 2300-" & $sNextYear & $sNextMonth & $sNextDay & " 0900-张俊华.doc"
+    _Word_DocSaveAs($oDoc, "E:\zjh\work\stt-it\普通账号申请记录" & "\" & $sNewDocumentName)
+    If @error Then Exit MsgBox($MB_SYSTEMMODAL, "Word UDF: _Word_DocSaveAs", _
+        "Error saving the word document." & @CRLF & "@error = " & @error & ", @extended = " & @extended)
+        
+    ;excel 文档
+    Local $oExcel = _Excel_Open()
+    If @error Then Exit MsgBox(16, "Excel UDF: _Excel_BookOpen failed", "Error Creating the excel application object.", & @CRLF & "@error = " & @erro & ", @extended= " & @extended)
+    
+    ;打开excel 模板
+    Local $sWorkbook = @ScriptDir & "\template\vpn_overnight.xls"
+    Local $oWorkbook = _Excel_BookOpen($oExcel, $sWorkbook)
+    If @error Then Exit MsgBox($MB_SYSTEMMODAL, "Excel UDF: _Excel_BookOpen failed", "Error opening " & $sWorkbook & "." & @CRLF & "@error= " & @error & ", @extended= " & @extended)
+    ;替换
+    _Excel_RangeReplace($oWorkbook, Default, Default, "[[startYear]]", @YEAR)
+    If @error Then Exit MsgBox($MB_SYSTEMMODAL, "Excel UDF: _Excel_RangeReplace failed", "Error opening " & $sWorkbook & @CRLF & "@error= " & @error & ", @extended= " & @extended)
+    _Excel_RangeReplace($oWorkbook, Default, Default, "[[startMonth]]", @MON)
+    _Excel_RangeReplace($oWorkbook, Default, Default, "[[startDay]]", @MDAY)
+    _Excel_RangeReplace($oWorkbook, Default, Default, "[[endYear]]", $sNextYear)
+    _Excel_RangeReplace($oWorkbook, Default, Default, "[[endMonth]]", $sNextMonth)
+    _Excel_RangeReplace($oWorkbook, Default, Default, "[[endDay]]", $sNextDay)
+    _Excel_RangeReplace($oWorkbook, Default, Default, "[[reason]]", $sRequestReason)
+    
+    ;保存excel文档
+    Local $sNewExcelFileName = "一级门户VPN和4A账号非工作时间使用申请表-张俊华-" & @YEAR & "-" & @MON & "-" & @MDAY & ".xls"
+    _Excel_BookSaveAs($oWorkbook, "E:\zjh\work\stt-it\VPN和4a非工作时间使用申请记录\" & $sNewExcelFileName,$xlExcel8, True)
+    If @error Then Exit MsgBox($MB_SYSTEMMODAL, "Excel UDF: _Excel_BookSaveAs failed", "@error= " & @error & ", @extended= " & @extended)
+    ;关闭excel文档
+    _Excel_Close($oExcel)
+    
+    
+    
+EndFunc ;Overnight_Auto_Dev
 ;
-;
-;
+;get leading zero for date
+Func get_leading_zero($i)
+    ; 1 -> 01
+    return StringFormat("%02i", $i)
+EndFunc
 ;
 ;
 ;
