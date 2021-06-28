@@ -39,17 +39,21 @@ Local $sUrlPomp208Sso="http://192.168.1.208/pomp/sso/tologin.do"
 Local $sUrlPomp204User="http://192.168.1.204/pomp/user/tologin.do"
 Local $sUrlPompLabsUser="https://labs.sh-stt.com/pomp/user/login.do"
 Local $sUrlPompResUser="https://117.136.190.188/user/tologin.do"
+Local $sUrlPompResSso="https://117.136.190.188/login/index.html"
 
 Local $sUrlMCMS200="https://192.168.1.200/mcms/user/login.do"
 Local $sUrlMcms216="http://192.168.0.216:8080/user/login.do"
 
 Local $sUrlEuopResUser="https://117.136.190.189:8443/user/tologin.do"
 Local $sUrlEuopLabsUser="http://180.169.129.54:8888/euop/user/tologin.do"
-Local $sUrlEuop181User="http://192.168.1.181:8080/euop/user/tologin.do"
-Local $sUrlEuop175User="http://192.168.1.175:8099/euop/user/tologin.do"
+Local $sUrlEuop181User="http://192.168.1.181:8080/euop/login/index2.html"
+Local $sUrlEuop175User="http://192.168.1.175:8099/euop/user/login.do"
 
 Local $sUserName="zhangjh@sh-stt.com"
 Local $sPhone="15800407048"
+
+;申请权限时的默认理由
+Local $sDefaultReason = "由于一级手厅新增位置对接联调，需要dev账号权限查看应用和接口机日志"
 
 
 Opt("GUIOnEventMode",1)
@@ -202,18 +206,20 @@ Func Pomp_Labs()
 EndFunc ;Pomp_Labs
 
 Func Pomp_Res()
-   Local $sUserNamePompRes="15261061786"
+    ;pomp 生产环境使用sso登录方式，禁用user方式了
+   Local $sUserNamePompRes="qc_zhangjh"
+   Local $sPassWord=""
    Local $sPhonePompRes="15800407048"
-   run($sFirefox & " -no-remote -profile firefox_profiles/Pomp_Res " & $sUrlPompResUser)
+   run($sFirefox & " -no-remote -profile firefox_profiles/Pomp_Res " & $sUrlPompResSso)
 
    Local $hWinFirefox = WinWaitActive("[管理员登录 — Mozilla Firefox;CLASS:MozillaWindowClass]","")
    Sleep(3000)
-   Send("{TAB}")
+   ;Send("{TAB}")
    Send($sUserNamePompRes)
    Send("{TAB}")
-   Send($sPhonePompRes)
-   Send("{TAB}")
-   Send("")
+   Send($sPassWord)
+   ;Send("{TAB}")
+   ;Send("")
 
 EndFunc ;Pomp_Res
 
@@ -311,7 +317,7 @@ Func Ie_Default()
 EndFunc;
 
 ;普通账号申请
-;自动创建一个word文档
+;自动创建一个word文档, 目前只有doc可以，docx的文档保存后再用word打开提示格式有问题
 Func Word_Auto_Dev()
     ;create the document for dev account
     Local $oWord = _Word_Create()
@@ -331,8 +337,8 @@ Func Word_Auto_Dev()
     
     ;ask for a reason
     ;如果输入为空则使用默认理由，如果有输入则使用输入理由
-    Local $sDefaultReason = "由于EUOP&POMP现网维护，需要dev账号权限查看应用和接口机日志"
-    Local $sRequestReason = InputBox("申请理由", "申请普通用户理由",$sDefaultReason,"", 300, -1, 0,0)
+   
+    Local $sRequestReason = InputBox("申请理由", "申请普通用户理由",$sDefaultReason,"", 600, -1, 0,0)
     ; change the [[reason]]
     _Word_DocFindReplace($oDoc, "[[reason]]", $sRequestReason)
     If @error Then Exit MsgBox($MB_SYSTEMMODAL, "Word UDF: _Word_DocFindReplace", _
@@ -381,8 +387,8 @@ Func Overnight_Auto_Dev()
     
     ;ask for a reason
     ;如果输入为空则使用默认理由，如果有输入则使用输入理由
-    Local $sDefaultReason = "由于EUOP&POMP现网维护，需要dev账号权限查看应用和接口机日志"
-    Local $sRequestReason = InputBox("申请理由", "申请普通用户理由",$sDefaultReason,"", 300, -1, 0,0)
+    
+    Local $sRequestReason = InputBox("申请理由", "申请普通用户理由",$sDefaultReason,"", 600, -1, 0,0)
     ; change the [[reason]]
     _Word_DocFindReplace($oDoc, "[[reason]]", $sRequestReason)
     If @error Then Exit MsgBox($MB_SYSTEMMODAL, "Word UDF: _Word_DocFindReplace", _
